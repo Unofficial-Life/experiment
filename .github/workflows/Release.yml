@@ -65,7 +65,7 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Use a secret for access token
       with:
         tag_name: ${{ github.event.inputs.tagName }}
-        prerelease: ${{ github.event.inputs.prerelease }}
-        draft: true
+        prerelease: ${{ github.event.inputs.release }}
+        draft: false
         body_path: ${{ github.workspace }}/changelog.md  # Replace with changelog location
         files: artifacts/*.zip
