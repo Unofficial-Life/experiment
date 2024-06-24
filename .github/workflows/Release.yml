@@ -63,24 +63,31 @@ jobs:
 
     - name: Get latest tag
       id: get_tag
-      run: echo ::set-output name=TAG_NAME::$(git describe --abbrev=0 --tags)
+      run: echo "TAG_NAME=$(git describe --abbrev=0 --tags)" >> $GITHUB_ENV
 
-    - name: Extract current tag version
-      id: extract_tag_version
-      run: echo ::set-output name=TAG_VERSION::${{ steps.get_tag.outputs.TAG_NAME | split('-')[0] }}
-
-    - name: Increment tag version
-      id: increment_tag_version
-      run: echo ::set-output name=NEW_TAG_VERSION::$((${{ steps.extract_tag_version.outputs.TAG_VERSION }} + 1))
+    - name: Extract and increment tag version
+      id: increment_tag
+      run: |
+        if [ -z "$TAG_NAME" ]; then
+          TAG_NAME="v0.0.0"
+        fi
+        VERSION=${TAG_NAME#v}
+        MAJOR=$(echo $VERSION | cut -d. -f1)
+        MINOR=$(echo $VERSION | cut -d. -f2)
+        PATCH=$(echo $VERSION | cut -d. -f3)
+        NEW_TAG="v$((MAJOR+1)).0.0"
+        echo "NEW_TAG=$NEW_TAG" >> $GITHUB_ENV
 
     - name: Publish GitHub release
       uses: softprops/action-gh-release@v2
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        tag_name: v${{ steps.increment_tag_version.outputs.NEW_TAG_VERSION }}.0
+        tag_name: ${{ env.NEW_TAG }}
         release: ${{ github.event.inputs.release }}
         draft: false
         body_path: ${{ github.workspace }}/changelog.md
-        files: artifacts1/* artifacts2/*
+        files: |
+          artifacts1/*
+          artifacts2/*
         name: ${{ github.event.inputs.releaseName }}
