@@ -40,13 +40,6 @@ jobs:
     - name: Zip Lawnchairmodule2
       run: zip -r Lawnchairmodule2.zip artifact2
 
-    - name: Read Changelog
-      id: changelog
-      run: |
-        echo "changelog<<EOF" >> $GITHUB_ENV
-        cat changelog.md >> $GITHUB_ENV
-        echo "EOF" >> $GITHUB_ENV
-
     - name: Create Release
       id: create_release
       uses: actions/create-release@v1
