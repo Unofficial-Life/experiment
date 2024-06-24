@@ -68,5 +68,5 @@ jobs:
         prerelease: ${{ github.event.inputs.prerelease }}
         draft: true
         body_path: ${{ github.workspace }}/Changelog.md  # Replace with changelog location
-        files: artifacts/*.apk  # Use wildcard for uploaded artifacts
+        files: artifacts/*.zip  # Use wildcard for uploaded artifacts
         name: ${{ github.event.inputs.releaseName }}
