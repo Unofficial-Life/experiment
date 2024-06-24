@@ -1,9 +1,5 @@
 name: Release Lawnchairmodule
 
-on:
- push:
-   branches:
-     - main # adjust this according to your default branch
 
 jobs:
  release:
