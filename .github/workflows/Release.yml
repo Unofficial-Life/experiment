@@ -76,7 +76,7 @@ jobs:
       - name: Extract and increment tag version
         id: increment_tag
         run: |
-          VERSION=${{ env.TAG_NAME#v }}
+          VERSION=${TAG_NAME#v}
           MAJOR=$(echo $VERSION | cut -d. -f1)
           MINOR=$(echo $VERSION | cut -d. -f2)
           PATCH=$(echo $VERSION | cut -d. -f3)
