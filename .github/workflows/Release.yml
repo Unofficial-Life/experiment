@@ -50,7 +50,13 @@ jobs:
     - name: Download artifacts
       uses: actions/download-artifact@v4  # Remove duplicate download step
       with:
-        name: Lawnchairmodule, Lawnchairmodule2  # Separate artifact names
+        name: Lawnchairmodule  # Separate artifact names
+        path: artifacts
+
+    - name: Download artifacts
+      uses: actions/download-artifact@v4  # Remove duplicate download step
+      with:
+        name: Lawnchairmodule2  # Separate artifact names
         path: artifacts
 
     - name: Publish GitHub release
