@@ -57,17 +57,21 @@ jobs:
         prerelease: false
 
     - name: Upload Lawnchairmodule to Release
-      uses: svenstaro/upload-release-action@v2
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        repo_token: ${{ secrets.GITHUB_TOKEN }}
-        file: Lawnchairmodule.zip
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ./Lawnchairmodule.zip
         asset_name: Lawnchairmodule.zip
-        tag: ${{ github.event.release.tag_name }}
+        asset_content_type: application/zip
 
     - name: Upload Lawnchairmodule2 to Release
-      uses: svenstaro/upload-release-action@v2
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        repo_token: ${{ secrets.GITHUB_TOKEN }}
-        file: Lawnchairmodule2.zip
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ./Lawnchairmodule2.zip
         asset_name: Lawnchairmodule2.zip
-        tag: ${{ github.event.release.tag_name }}
+        asset_content_type: application/zip
