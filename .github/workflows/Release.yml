@@ -68,3 +68,4 @@ jobs:
         prerelease: ${{ github.event.inputs.prerelease }}
         draft: true
         body_path: ${{ github.workspace }}/changelog.md  # Replace with changelog location
+        files: artifacts/*.zip
