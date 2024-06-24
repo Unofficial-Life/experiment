@@ -56,7 +56,7 @@ jobs:
         prerelease: false
 
     - name: Upload Lawnchairmodule to Release
-      uses: softprops/action-gh-release@v2.0.6
+      uses: actions/upload-release-asset@v1
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
         asset_path: ./Lawnchairmodule.zip
@@ -64,7 +64,7 @@ jobs:
         asset_content_type: application/zip
 
     - name: Upload Lawnchairmodule2 to Release
-      uses: softprops/action-gh-release@v2.0.6
+      uses: actions/upload-release-asset@v1
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
         asset_path: ./Lawnchairmodule2.zip
