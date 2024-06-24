@@ -22,11 +22,14 @@ jobs:
         mkdir -p artifact1
         rsync -av --progress ./ artifact1 --exclude .github --exclude .git --exclude system/priv-app2
 
+    - name: Compress Lawnchairmodule
+      run: zip -r artifact1.zip artifact1
+
     - name: Upload Lawnchairmodule
       uses: actions/upload-artifact@v4
       with:
         name: Lawnchairmodule
-        path: artifact1
+        path: artifact1.zip
 
     - name: Prepare Lawnchairmodule2
       run: |
@@ -34,11 +37,14 @@ jobs:
         rsync -av --progress ./ artifact2 --exclude .github --exclude .git --exclude system/priv-app
         mv artifact2/system/priv-app2 artifact2/system/priv-app
 
+    - name: Compress Lawnchairmodule2
+      run: zip -r artifact2.zip artifact2
+
     - name: Upload Lawnchairmodule2
       uses: actions/upload-artifact@v4
       with:
         name: Lawnchairmodule2
-        path: artifact2
+        path: artifact2.zip
 
   publish-release:
     runs-on: ubuntu-latest
@@ -49,17 +55,17 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
-    - name: Download artifacts1
+    - name: Download Lawnchairmodule
       uses: actions/download-artifact@v4
       with:
         name: Lawnchairmodule
-        path: artifacts1
+        path: .
 
-    - name: Download artifacts2
+    - name: Download Lawnchairmodule2
       uses: actions/download-artifact@v4
       with:
         name: Lawnchairmodule2
-        path: artifacts2
+        path: .
 
     - name: Get latest tag
       id: get_tag
@@ -88,6 +94,6 @@ jobs:
         draft: false
         body_path: ${{ github.workspace }}/changelog.md
         files: |
-          artifacts1/*
-          artifacts2/*
+          artifact1.zip
+          artifact2.zip
         name: ${{ github.event.inputs.releaseName }}
