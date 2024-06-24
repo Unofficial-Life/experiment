@@ -50,13 +50,13 @@ jobs:
     - name: Download artifacts
       uses: actions/download-artifact@v4
       with:
-        name: Lawnchairmosule  # Replace with your artifact names if different
+        name: Lawnchairmodule  # Replace with your artifact names if different
         path: artifacts
 
     - name: Download artifacts
       uses: actions/download-artifact@v4
       with:
-        name: Lawnchairmosule2  # Replace with your artifact names if different
+        name: Lawnchairmodule2  # Replace with your artifact names if different
         path: artifacts
 
     - name: Publish GitHub release
