@@ -67,4 +67,4 @@ jobs:
         tag_name: ${{ github.event.inputs.tagName }}
         prerelease: ${{ github.event.inputs.prerelease }}
         draft: true
-        body_path: ${{ github.workspace }}/Changelog.md  # Replace with changelog location
+        body_path: ${{ github.workspace }}/changelog.md  # Replace with changelog location
