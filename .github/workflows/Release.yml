@@ -64,7 +64,7 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Use a secret for access token
       with:
-        tag_name: ${{ github.event.inputs.tagName }}
+        tag_name: v1.0
         prerelease: ${{ github.event.inputs.release }}
         draft: false
         body_path: ${{ github.workspace }}/changelog.md  # Replace with changelog location
