@@ -68,5 +68,5 @@ jobs:
         release: ${{ github.event.inputs.release }}
         draft: false
         body_path: ${{ github.workspace }}/changelog.md  # Replace with changelog location
-        files: Lawnchairmodule, Lawnchairmodule2
+        files: artifacts
         name: ${{ github.event.inputs.releaseName }}
