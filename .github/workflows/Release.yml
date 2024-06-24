@@ -59,34 +59,12 @@ jobs:
         name: Lawnchairmodule2  # Separate artifact names
         path: artifacts
 
-    - name: Get latest tag
-      id: get_latest_tag
-      run: |
-        latest_tag=$(gh release list --limit 1 --json tagName --jq '.[0].tagName')
-        echo "latest_tag=${latest_tag}" >> $GITHUB_ENV
-
-    - name: Increment version
-      id: increment_version
-      run: |
-        latest_tag=${{ env.latest_tag }}
-        if [ -z "$latest_tag" ]; then
-          new_tag="v4.0.0"
-        else
-          version=${latest_tag#v}
-          major=${version%%.*}
-          minor=${version#*.}
-          minor=${minor%%.*}
-          new_minor=$((minor + 1))
-          new_tag="v${major}.${new_minor}.0"
-        fi
-        echo "new_tag=${new_tag}" >> $GITHUB_ENV
-
     - name: Publish GitHub release
       uses: softprops/action-gh-release@v2
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Use a secret for access token
       with:
-        tag_name: ${{ github.event.inputs.tagName }}
+        tag_name: v2.0
         release: ${{ github.event.inputs.release }}
         draft: false
         body_path: ${{ github.workspace }}/changelog.md  # Replace with changelog location
