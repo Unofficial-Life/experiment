@@ -82,7 +82,5 @@ jobs:
         release: ${{ github.event.inputs.release }}
         draft: false
         body_path: ${{ github.workspace }}/changelog.md
-        files: |
-          artifacts1/*
-          artifacts2/*
+        files: artifacts1/* artifacts2/*
         name: ${{ github.event.inputs.releaseName }}
