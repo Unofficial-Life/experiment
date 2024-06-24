@@ -50,7 +50,13 @@ jobs:
     - name: Download artifacts
       uses: actions/download-artifact@v4
       with:
-        name: Release APK  # Replace with your artifact names if different
+        name: Lawnchairmosule  # Replace with your artifact names if different
+        path: artifacts
+
+    - name: Download artifacts
+      uses: actions/download-artifact@v4
+      with:
+        name: Lawnchairmosule2  # Replace with your artifact names if different
         path: artifacts
 
     - name: Publish GitHub release
