@@ -42,7 +42,10 @@ jobs:
 
     - name: Read Changelog
       id: changelog
-      run: echo "changelog=$(cat changelog.md)" >> $GITHUB_ENV
+      run: |
+        echo "changelog<<EOF" >> $GITHUB_ENV
+        cat changelog.md >> $GITHUB_ENV
+        echo "EOF" >> $GITHUB_ENV
 
     - name: Create Release
       id: create_release
