@@ -40,6 +40,9 @@ jobs:
     - name: Zip Lawnchairmodule2
       run: zip -r Lawnchairmodule2.zip artifact2
 
+    - name: Generate Changelog
+      run: echo "# Changelog 🎉" > ${{ github.workspace }}-Changelog.md
+
     - name: Create Release
       id: create_release
       uses: actions/create-release@v1
