@@ -14,6 +14,39 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v3
 
+    - name: Set up GitHub CLI
+      run: |
+        echo "::add-matcher::${RUNNER_TEMP}/gh.json"
+        sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-key C99B11DEB97541F0
+        echo "deb [arch=amd64] https://cli.github.com/packages stable main" | sudo tee /etc/apt/sources.list.d/github-cli.list > /dev/null
+        sudo apt-get update
+        sudo apt-get install gh -y
+
+    - name: Log in to GitHub CLI
+      run: echo "${{ secrets.GITHUB_TOKEN }}" | gh auth login --with-token
+
+    - name: Get latest tag
+      id: get_latest_tag
+      run: |
+        latest_tag=$(gh release list --limit 1 --json tagName --jq '.[0].tagName')
+        echo "latest_tag=${latest_tag}" >> $GITHUB_ENV
+
+    - name: Increment version
+      id: increment_version
+      run: |
+        latest_tag=${{ env.latest_tag }}
+        if [ -z "$latest_tag" ]; then
+          new_tag="v4.0.0"
+        else
+          version=${latest_tag#v}
+          major=${version%%.*}
+          minor=${version#*.}
+          minor=${minor%%.*}
+          new_minor=$((minor + 1))
+          new_tag="v${major}.${new_minor}.0"
+        fi
+        echo "new_tag=${new_tag}" >> $GITHUB_ENV
+
     - name: Remove .github and .git folders
       run: |
         find . -type d -name .github -exec rm -rf {} +
@@ -40,8 +73,12 @@ jobs:
     - name: Zip Lawnchairmodule2
       run: zip -r Lawnchairmodule2.zip artifact2
 
-    - name: Generate Changelog
-      run: echo "# Changelog 🎉" > ${{ github.workspace }}-Changelog.md
+    - name: Read Changelog
+      id: changelog
+      run: |
+        echo "changelog<<EOF" >> $GITHUB_ENV
+        cat changelog.md >> $GITHUB_ENV
+        echo "EOF" >> $GITHUB_ENV
 
     - name: Create Release
       id: create_release
@@ -57,6 +94,8 @@ jobs:
 
     - name: Upload Lawnchairmodule to Release
       uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
         asset_path: ./Lawnchairmodule.zip
@@ -65,6 +104,8 @@ jobs:
 
     - name: Upload Lawnchairmodule2 to Release
       uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
         asset_path: ./Lawnchairmodule2.zip
