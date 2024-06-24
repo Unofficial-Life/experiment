@@ -3,48 +3,48 @@ name: Release
 on:
   push:
     branches:
-    - main
+      - main
 
 jobs:
   build-and-upload:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v2
+      - uses: actions/checkout@v2
 
-    - name: Build Lawnchairmodule (replace with your build commands)
-      run: |
-        # Add your build commands here
-        # Example: ./gradlew assembleRelease
+      - name: Build Lawnchairmodule (replace with your build commands)
+        run: |
+          # Add your build commands here
+          # Example: ./gradlew assembleRelease
 
-    - name: Prepare Lawnchairmodule
-      run: |
-        mkdir -p artifact1
-        rsync -av --progress ./ artifact1 --exclude .github --exclude .git --exclude system/priv-app2
+      - name: Prepare Lawnchairmodule
+        run: |
+          mkdir -p artifact1
+          rsync -av --progress ./ artifact1 --exclude .github --exclude .git --exclude system/priv-app2
 
-    - name: Compress Lawnchairmodule
-      run: zip -r artifact1.zip artifact1
+      - name: Compress Lawnchairmodule
+        run: zip -r artifact1.zip artifact1
 
-    - name: Upload Lawnchairmodule
-      uses: actions/upload-artifact@v4
-      with:
-        name: Lawnchairmodule
-        path: artifact1.zip
+      - name: Upload Lawnchairmodule
+        uses: actions/upload-artifact@v4
+        with:
+          name: Lawnchairmodule
+          path: artifact1.zip
 
-    - name: Prepare Lawnchairmodule2
-      run: |
-        mkdir -p artifact2
-        rsync -av --progress ./ artifact2 --exclude .github --exclude .git --exclude system/priv-app
-        mv artifact2/system/priv-app2 artifact2/system/priv-app
+      - name: Prepare Lawnchairmodule2
+        run: |
+          mkdir -p artifact2
+          rsync -av --progress ./ artifact2 --exclude .github --exclude .git --exclude system/priv-app
+          mv artifact2/system/priv-app2 artifact2/system/priv-app
 
-    - name: Compress Lawnchairmodule2
-      run: zip -r artifact2.zip artifact2
+      - name: Compress Lawnchairmodule2
+        run: zip -r artifact2.zip artifact2
 
-    - name: Upload Lawnchairmodule2
-      uses: actions/upload-artifact@v4
-      with:
-        name: Lawnchairmodule2
-        path: artifact2.zip
+      - name: Upload Lawnchairmodule2
+        uses: actions/upload-artifact@v4
+        with:
+          name: Lawnchairmodule2
+          path: artifact2.zip
 
   publish-release:
     runs-on: ubuntu-latest
@@ -53,47 +53,49 @@ jobs:
       contents: write
 
     steps:
-    - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-    - name: Download Lawnchairmodule
-      uses: actions/download-artifact@v4
-      with:
-        name: Lawnchairmodule
-        path: .
+      - name: Download Lawnchairmodule
+        uses: actions/download-artifact@v4
+        with:
+          name: Lawnchairmodule
+          path: .
 
-    - name: Download Lawnchairmodule2
-      uses: actions/download-artifact@v4
-      with:
-        name: Lawnchairmodule2
-        path: .
+      - name: Download Lawnchairmodule2
+        uses: actions/download-artifact@v4
+        with:
+          name: Lawnchairmodule2
+          path: .
 
-    - name: Get latest tag
-      id: get_tag
-      run: echo "TAG_NAME=$(git describe --abbrev=0 --tags)" >> $GITHUB_ENV
+      - name: Get latest tag
+        id: get_tag
+        run: |
+          TAG_NAME=$(git describe --abbrev=0 --tags)
+          echo "TAG_NAME=${TAG_NAME}" >> $GITHUB_ENV
 
-    - name: Extract and increment tag version
-      id: increment_tag
-      run: |
-        if [ -z "$TAG_NAME" ]; then
-          TAG_NAME="v0.0.0"
-        fi
-        VERSION=${TAG_NAME#v}
-        MAJOR=$(echo $VERSION | cut -d. -f1)
-        MINOR=$(echo $VERSION | cut -d. -f2)
-        PATCH=$(echo $VERSION | cut -d. -f3)
-        NEW_TAG="v$((MAJOR+1)).0.0"
-        echo "NEW_TAG=$NEW_TAG" >> $GITHUB_ENV
+      - name: Extract and increment tag version
+        id: increment_tag
+        run: |
+          if [ -z "${TAG_NAME}" ]; then
+            TAG_NAME="v0.0.0"
+          fi
+          VERSION=${TAG_NAME#v}
+          MAJOR=$(echo $VERSION | cut -d. -f1)
+          MINOR=$(echo $VERSION | cut -d. -f2)
+          PATCH=$(echo $VERSION | cut -d. -f3)
+          NEW_TAG="v$((MAJOR+1)).0.0"
+          echo "NEW_TAG=${NEW_TAG}" >> $GITHUB_ENV
 
-    - name: Publish GitHub release
-      uses: softprops/action-gh-release@v2
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        tag_name: ${{ env.NEW_TAG }}
-        release: ${{ github.event.inputs.release }}
-        draft: false
-        body_path: ${{ github.workspace }}/changelog.md
-        files: |
-          artifact1.zip
-          artifact2.zip
-        name: ${{ github.event.inputs.releaseName }}
+      - name: Publish GitHub release
+        uses: softprops/action-gh-release@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ env.NEW_TAG }}
+          release: ${{ github.event.inputs.release }}
+          draft: false
+          body_path: ${{ github.workspace }}/changelog.md
+          files: |
+            artifact1.zip
+            artifact2.zip
+          name: ${{ github.event.inputs.releaseName }}
