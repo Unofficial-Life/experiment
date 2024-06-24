@@ -53,13 +53,13 @@ jobs:
       uses: actions/download-artifact@v4  # Remove duplicate download step
       with:
         name: Lawnchairmodule  # Separate artifact names
-        path: artifacts
+        path: artifacts1
 
     - name: Download artifacts
       uses: actions/download-artifact@v4  # Remove duplicate download step
       with:
         name: Lawnchairmodule2  # Separate artifact names
-        path: artifacts
+        path: artifacts2
 
     - name: Publish GitHub release
       uses: softprops/action-gh-release@v2
@@ -70,5 +70,5 @@ jobs:
         release: ${{ github.event.inputs.release }}
         draft: false
         body_path: ${{ github.workspace }}/changelog.md  # Replace with changelog location
-        files: artifacts
+        files: artifacts/*.zip
         name: ${{ github.event.inputs.releaseName }}
