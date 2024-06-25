@@ -22,7 +22,7 @@ jobs:
       - name: Make Lawnchair Mod Module
         run: |
             rm -rf ./system/priv-app
-            mv ./priv-app2 ./system/priv-app
+            mv ./system/priv-app2 ./system/priv-app
             zip -r Lawnchair-Mod.zip * -x .git* Lawnchair.zip
 
       - name: Publish GitHub release
