@@ -34,6 +34,7 @@ jobs:
             cd /tmp/Lawnchair-Mod
             zip -r Lawnchair-Mod.zip * -x .git*
             mv Lawnchair-Mod.zip ${{ github.workspace }}
+            mv changelog.md ${{ github.workspace }}
             cd ${{ github.workspace }}
 
       - name: Publish GitHub release
