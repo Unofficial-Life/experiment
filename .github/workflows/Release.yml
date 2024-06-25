@@ -18,13 +18,14 @@ jobs:
 
       - name: Make Lawnchair Module
         run: |
-            zip -r Lawnchair.zip * -x .git* ./system/priv-app2
+            mv ./system/priv-app2 ./
+            zip -r Lawnchair.zip * -x .git*
         id: lawnchair-zip
 
       - name: Make Lawnchair Mod Module
         run: |
             rm -rf ./system/priv-app
-            mv ./system/priv-app2 ./system/priv-app
+            mv ./priv-app2 ./system/priv-app
             zip -r Lawnchair-Mod.zip * -x .git* Lawnchair.zip
         id: lawnchair2-zip
 
