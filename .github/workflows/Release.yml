@@ -1,11 +1,10 @@
 name: Release Lawnchair
 
 on:
-  workflow_dispatch:  # Trigger the workflow when code is pushed to the main branch
+  workflow_dispatch:
 
 permissions:
-  contents: write  # Ensures the workflow has write access to the repository content
-
+  contents: write
 jobs:
   release:
     runs-on: ubuntu-latest
@@ -23,18 +22,20 @@ jobs:
       id: get_version
       run: |
         git fetch --tags
-        if [ $(git tag | wc -l) -eq 0 ]; then
-          echo "::set-output name=version::v1.0"
+        if [ $(git tag -l "v*" | wc -l) -eq 0 ]; then
+          echo "version=v1.0" >> $GITHUB_ENV
         else
-          latest_tag=$(git describe --tags `git rev-list --tags --max-count=1`)
-          version=$(echo $latest_tag | awk -F. '{$NF = $NF + 1;} 1' | sed 's/ /./g')
-          echo "::set-output name=version::$version"
+          latest_tag=$(git tag -l "v*" | sort -V | tail -n 1)
+          version_number=$(echo $latest_tag | cut -d'.' -f1 | cut -c2-)
+          new_version_number=$((version_number + 1))
+          new_version="v${new_version_number}.0"
+          echo "version=${new_version}" >> $GITHUB_ENV
         fi
 
     - name: Create new version tag
       run: |
-        git tag ${{ steps.get_version.outputs.version }}
-        git push origin ${{ steps.get_version.outputs.version }}
+        git tag ${{ env.version }}
+        git push origin ${{ env.version }}
 
     - name: Zip Lawnchair14_New_Accent
       run: zip -r Lawnchair14_New_Accent.zip Lawnchair14_New_Accent
@@ -48,8 +49,8 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        tag_name: ${{ steps.get_version.outputs.version }}
-        release_name: Lawnchair 14 ${{ steps.get_version.outputs.version }}
+        tag_name: ${{ env.version }}
+        release_name: Lawnchair 14 ${{ env.version }}
         body_path: changelog.md
         draft: false
         prerelease: false
