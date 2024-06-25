@@ -1,49 +1,75 @@
-name: Release
- 
+name: Release Lawnchair
+
 on:
-  workflow_dispatch:
-    inputs:
-      RELEASE_TAG:
-        description: 'Tag for the Release'
-        required: true
+  workflow_dispatch:  # Trigger the workflow when code is pushed to the main branch
+
+permissions:
+  contents: write  # Ensures the workflow has write access to the repository content
 
 jobs:
-  publish-release:
+  release:
     runs-on: ubuntu-latest
-    permissions:
-      contents: write
 
     steps:
-      - uses: actions/checkout@v4
+    - name: Checkout repository
+      uses: actions/checkout@v3
 
-      - name: Make Lawnchair Module
-        run: |
-            mkdir /tmp/Lawnchair
-            mv * /tmp/Lawnchair/
-            mv /tmp/Lawnchair/system/priv-app2 ${{ github.workspace }}
-            cd /tmp/Lawnchair
-            zip -r Lawnchair.zip * -x .git*
-            mv Lawnchair.zip ${{ github.workspace }}
-            cd ${{ github.workspace }}
+    - name: Set up Git
+      run: |
+        git config --global user.name "github-actions[bot]"
+        git config --global user.email "github-actions[bot]@users.noreply.github.com"
 
-      - name: Make Lawnchair Mod Module
-        run: |
-            mv /tmp/Lawnchair /tmp/Lawnchair-Mod
-            rm -r /tmp/Lawnchair-Mod/system/priv-app
-            mv ${{ github.workspace }}/priv-app2 /tmp/Lawnchair-Mod/system/priv-app
-            cd /tmp/Lawnchair-Mod
-            zip -r Lawnchair-Mod.zip * -x .git*
-            mv Lawnchair-Mod.zip ${{ github.workspace }}
-            mv changelog.md ${{ github.workspace }}
-            cd ${{ github.workspace }}
+    - name: Get current version tag
+      id: get_version
+      run: |
+        git fetch --tags
+        if [ $(git tag | wc -l) -eq 0 ]; then
+          echo "::set-output name=version::v1.0"
+        else
+          latest_tag=$(git describe --tags `git rev-list --tags --max-count=1`)
+          version=$(echo $latest_tag | awk -F. '{$NF = $NF + 1;} 1' | sed 's/ /./g')
+          echo "::set-output name=version::$version"
+        fi
 
-      - name: Publish GitHub release
-        uses: softprops/action-gh-release@v2
-        with:
-          tag_name: ${{ github.event.inputs.RELEASE_TAG }}
-          name: Lawnchair ${{ github.event.inputs.RELEASE_TAG }}
-          draft: false
-          body_path: ${{ github.workspace }}/changelog.md
-          files: |
-            Lawnchair.zip
-            Lawnchair-Mod.zip
+    - name: Create new version tag
+      run: |
+        git tag ${{ steps.get_version.outputs.version }}
+        git push origin ${{ steps.get_version.outputs.version }}
+
+    - name: Zip Lawnchair14_New_Accent
+      run: zip -r Lawnchair14_New_Accent.zip Lawnchair14_New_Accent
+
+    - name: Zip Lawnchair14_Old_Accent
+      run: zip -r Lawnchair14_Old_Accent.zip Lawnchair14_Old_A12_Accent
+
+    - name: Create GitHub release
+      id: create_release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: ${{ steps.get_version.outputs.version }}
+        release_name: Lawnchair 14 ${{ steps.get_version.outputs.version }}
+        body_path: changelog.md
+        draft: false
+        prerelease: false
+
+    - name: Upload Lawnchair14_New_Accent to release
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ./Lawnchair14_New_Accent.zip
+        asset_name: Lawnchair14_New_Accent.zip
+        asset_content_type: application/zip
+
+    - name: Upload Lawnchair14_Old_Accent to release
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ./Lawnchair14_Old_Accent.zip
+        asset_name: Lawnchair14_Old_Accent.zip
+        asset_content_type: application/zip
