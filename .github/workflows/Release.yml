@@ -17,17 +17,13 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Make Lawnchair Module
-        run: |
-            mv ./system/priv-app2 ./
-            zip -r Lawnchair.zip * -x .git*
-        id: lawnchair-zip
+        run: zip -r Lawnchair.zip * -x .git* -x ./system/priv-app2
 
       - name: Make Lawnchair Mod Module
         run: |
             rm -rf ./system/priv-app
             mv ./priv-app2 ./system/priv-app
             zip -r Lawnchair-Mod.zip * -x .git* Lawnchair.zip
-        id: lawnchair2-zip
 
       - name: Publish GitHub release
         uses: softprops/action-gh-release@v2
