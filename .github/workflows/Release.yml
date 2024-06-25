@@ -18,22 +18,22 @@ jobs:
 
       - name: Make Lawnchair Module
         run: |
-            mkdir Lawnchair
-            mv * Lawnchair/
-            mv -r Lawnchair/system/priv-app2 ./
-            cd Lawnchair
+            mkdir /tmp/Lawnchair
+            mv * /tmp/Lawnchair/
+            mv -r /tmp/Lawnchair/system/priv-app2 ./
+            cd /tmp/Lawnchair
             zip -r Lawnchair.zip * -x .git*
-            mv Lawnchair.zip ../
+            mv Lawnchair.zip ${{ github.workspace }}
             cd ${{ github.workspace }}
 
       - name: Make Lawnchair Mod Module
         run: |
-            mv Lawnchair Lawnchair-Mod
-            rm -r Lawnchair-Mod/system/priv-app
-            mv ./priv-app2 Lawnchair-Mod/system/priv-app
-            cd Lawnchair-Mod
+            mv /tmp/Lawnchair /tmp/Lawnchair-Mod
+            rm -r /tmp/Lawnchair-Mod/system/priv-app
+            mv ./priv-app2 /tmp/Lawnchair-Mod/system/priv-app
+            cd /tmp/Lawnchair-Mod
             zip -r Lawnchair-Mod.zip * -x .git*
-            mv Lawnchair-Mod.zip ../
+            mv Lawnchair-Mod.zip ${{ github.workspace }}
             cd ${{ github.workspace }}
 
       - name: Publish GitHub release
