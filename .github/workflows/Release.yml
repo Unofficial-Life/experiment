@@ -20,7 +20,7 @@ jobs:
         run: |
             mkdir /tmp/Lawnchair
             mv * /tmp/Lawnchair/
-            mv -r /tmp/Lawnchair/system/priv-app2 ./
+            mv /tmp/Lawnchair/system/priv-app2 ${{ github.workspace }}
             cd /tmp/Lawnchair
             zip -r Lawnchair.zip * -x .git*
             mv Lawnchair.zip ${{ github.workspace }}
@@ -30,7 +30,7 @@ jobs:
         run: |
             mv /tmp/Lawnchair /tmp/Lawnchair-Mod
             rm -r /tmp/Lawnchair-Mod/system/priv-app
-            mv ./priv-app2 /tmp/Lawnchair-Mod/system/priv-app
+            mv ${{ github.workspace }}/priv-app2 /tmp/Lawnchair-Mod/system/priv-app
             cd /tmp/Lawnchair-Mod
             zip -r Lawnchair-Mod.zip * -x .git*
             mv Lawnchair-Mod.zip ${{ github.workspace }}
