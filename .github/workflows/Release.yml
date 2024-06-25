@@ -19,7 +19,7 @@ jobs:
       - name: Make Lawnchair Module
         run: |
             mv ./system/priv-app2 ./
-            zip -r Lawnchair.zip * -x .git* priv*
+            zip -r Lawnchair.zip * -x .git* -x priv*
 
       - name: Make Lawnchair Mod Module
         run: |
