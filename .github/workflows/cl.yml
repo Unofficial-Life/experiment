@@ -1,39 +1,24 @@
 name: Release Lawnchairmodule
-
+on:
+  push:
+    branches:
+              - develop
 jobs:
-  release:
+  build:
     runs-on: ubuntu-latest
 
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
 
-    - name: Remove .github and .git folders
-      run: |
-        find . -type d -name .github -exec rm -rf {} +
-        rm -rf .git
-
-    # First artifact: Lawnchairmodule
-    - name: Prepare Lawnchairmodule
-      run: |
-        mkdir -p artifact1
-        rsync -av --progress ./ artifact1 --exclude .github --exclude .git --exclude system/priv-app2 --exclude artifact1 --exclude artifact2
-    - name: Upload Lawnchairmodule
-      uses: actions/upload-artifact@v4
+    - name: Create artifact for Lawnchair14_New_Accent
+      uses: actions/upload-artifact@v3
       with:
-        name: Lawnchairmodule
-        path: artifact1
-        if-no-files-found: error
+        name: Lawnchair14_New_Aceent
+        path: Lawnchair14_New_Accent/
 
-    # Second artifact: Lawnchairmodule2
-    - name: Prepare Lawnchairmodule2
-      run: |
-        mkdir -p artifact2
-        rsync -av --progress ./ artifact2 --exclude .github --exclude .git --exclude system/priv-app --exclude artifact1 --exclude artifact2
-        mv artifact2/system/priv-app2 artifact2/system/priv-app
-    - name: Upload Lawnchairmodule2
-      uses: actions/upload-artifact@v4
+    - name: Create artifact for Lawnchair14_Old_A12_Accent
+      uses: actions/upload-artifact@v3
       with:
-        name: Lawnchairmodule2
-        path: artifact2
-        if-no-files-found: error
+        name: Lawnchair14_Old_Aceent
+        path: Lawnchair14_Old_A12_Accent/
