@@ -3,9 +3,6 @@ name: Release
 on:
   workflow_dispatch:
     inputs:
-      RELEASE_NAME:
-        description: 'Name for the release'
-        required: true
       RELEASE_TAG:
         description: 'Tag for the Release'
         required: true
@@ -28,14 +25,14 @@ jobs:
         run: |
             rm -rf ./system/priv-app
             mv ./system/priv-app2 ./system/priv-app
-            zip -r Lawnchair-Mod.zip * -x .git*
+            zip -r Lawnchair-Mod.zip * -x .git* Lawnchair.zip
         id: lawnchair2-zip
 
       - name: Publish GitHub release
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ github.event.inputs.RELEASE_TAG }}
-          name: ${{ github.event.inputs.RELEASE_NAME }}
+          name: Lawnchair ${{ github.event.inputs.RELEASE_TAG }}
           draft: false
           body_path: ${{ github.workspace }}/changelog.md
           files: |
